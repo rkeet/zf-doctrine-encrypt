@@ -1,9 +1,9 @@
 <?php
 
-namespace Encrypt\Factory\Service;
+namespace Keet\Encrypt\Factory\Service;
 
-use Encrypt\Interfaces\HashingInterface;
-use Encrypt\Service\HashingService;
+use Keet\Encrypt\Interfaces\HashingInterface;
+use Keet\Encrypt\Service\HashingService;
 use Exception;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Encrypt\Factory\Adapter;
+namespace Keet\Encrypt\Factory\Adapter;
 
-use Encrypt\Adapter\EncryptionAdapter;
-use Encrypt\Exception\OptionsNotFoundException;
+use Keet\Encrypt\Adapter\EncryptionAdapter;
+use Keet\Encrypt\Exception\OptionsNotFoundException;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 

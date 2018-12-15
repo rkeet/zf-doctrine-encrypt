@@ -1,6 +1,6 @@
 <?php
 
-namespace Encrypt\Interfaces;
+namespace Keet\Encrypt\Interfaces;
 
 interface EncryptionInterface
 {

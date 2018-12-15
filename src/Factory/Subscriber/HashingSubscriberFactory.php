@@ -1,14 +1,14 @@
 <?php
 
-namespace Encrypt\Factory\Subscriber;
+namespace Keet\Encrypt\Factory\Subscriber;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
 use DoctrineModule\Service\AbstractFactory;
-use Encrypt\Adapter\HashingAdapter;
-use Encrypt\Interfaces\HashingInterface;
-use Encrypt\Options\HashingOptions;
-use Encrypt\Subscriber\HashingSubscriber;
+use Keet\Encrypt\Adapter\HashingAdapter;
+use Keet\Encrypt\Interfaces\HashingInterface;
+use Keet\Encrypt\Options\HashingOptions;
+use Keet\Encrypt\Subscriber\HashingSubscriber;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 

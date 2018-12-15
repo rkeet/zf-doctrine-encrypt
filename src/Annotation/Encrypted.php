@@ -1,6 +1,6 @@
 <?php
 
-namespace Encrypt\Annotation;
+namespace Keet\Encrypt\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
 

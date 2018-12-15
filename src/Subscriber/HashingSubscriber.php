@@ -1,6 +1,6 @@
 <?php
 
-namespace Encrypt\Subscriber;
+namespace Keet\Encrypt\Subscriber;
 
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventSubscriber;
@@ -8,9 +8,9 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
-use Encrypt\Annotation\Hashed;
-use Encrypt\Interfaces\HashingInterface;
-use Encrypt\Interfaces\SaltInterface;
+use Keet\Encrypt\Annotation\Hashed;
+use Keet\Encrypt\Interfaces\HashingInterface;
+use Keet\Encrypt\Interfaces\SaltInterface;
 
 class HashingSubscriber implements EventSubscriber
 {

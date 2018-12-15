@@ -1,9 +1,9 @@
 <?php
 
-namespace Encrypt\Options;
+namespace Keet\Encrypt\Options;
 
 use Doctrine\Common\Annotations\Reader;
-use Encrypt\Interfaces\HashingInterface;
+use Keet\Encrypt\Interfaces\HashingInterface;
 use Zend\Stdlib\AbstractOptions;
 
 class HashingOptions extends AbstractOptions

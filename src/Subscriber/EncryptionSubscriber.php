@@ -1,6 +1,6 @@
 <?php
 
-namespace Encrypt\Subscriber;
+namespace Keet\Encrypt\Subscriber;
 
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventSubscriber;
@@ -10,8 +10,8 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
-use Encrypt\Annotation\Encrypted;
-use Encrypt\Interfaces\EncryptionInterface;
+use Keet\Encrypt\Annotation\Encrypted;
+use Keet\Encrypt\Interfaces\EncryptionInterface;
 
 class EncryptionSubscriber implements EventSubscriber
 {

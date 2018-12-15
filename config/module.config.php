@@ -1,18 +1,18 @@
 <?php
 
-namespace Encrypt;
+namespace Keet\Encrypt;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Encrypt\Adapter\EncryptionAdapter;
-use Encrypt\Adapter\HashingAdapter;
-use Encrypt\Factory\Adapter\EncryptionAdapterFactory;
-use Encrypt\Factory\Adapter\HashingAdapterFactory;
-use Encrypt\Factory\Service\EncryptionServiceFactory;
-use Encrypt\Factory\Service\HashingServiceFactory;
-use Encrypt\Factory\Subscriber\EncryptionSubscriberFactory;
-use Encrypt\Factory\Subscriber\HashingSubscriberFactory;
-use Encrypt\Service\EncryptionService;
-use Encrypt\Service\HashingService;
+use Keet\Encrypt\Adapter\EncryptionAdapter;
+use Keet\Encrypt\Adapter\HashingAdapter;
+use Keet\Encrypt\Factory\Adapter\EncryptionAdapterFactory;
+use Keet\Encrypt\Factory\Adapter\HashingAdapterFactory;
+use Keet\Encrypt\Factory\Service\EncryptionServiceFactory;
+use Keet\Encrypt\Factory\Service\HashingServiceFactory;
+use Keet\Encrypt\Factory\Subscriber\EncryptionSubscriberFactory;
+use Keet\Encrypt\Factory\Subscriber\HashingSubscriberFactory;
+use Keet\Encrypt\Service\EncryptionService;
+use Keet\Encrypt\Service\HashingService;
 
 return [
     'doctrine_factories' => [

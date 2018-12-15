@@ -1,13 +1,13 @@
 <?php
 
-namespace Encrypt\Factory\Subscriber;
+namespace Keet\Encrypt\Factory\Subscriber;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
 use DoctrineModule\Service\AbstractFactory;
-use Encrypt\Interfaces\EncryptionInterface;
-use Encrypt\Options\EncryptionOptions;
-use Encrypt\Subscriber\EncryptionSubscriber;
+use Keet\Encrypt\Interfaces\EncryptionInterface;
+use Keet\Encrypt\Options\EncryptionOptions;
+use Keet\Encrypt\Subscriber\EncryptionSubscriber;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 

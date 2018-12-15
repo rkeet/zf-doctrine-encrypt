@@ -1,8 +1,8 @@
 <?php
 
-namespace Encrypt\Service;
+namespace Keet\Encrypt\Service;
 
-use Encrypt\Interfaces\HashingInterface;
+use Keet\Encrypt\Interfaces\HashingInterface;
 
 class HashingService
 {

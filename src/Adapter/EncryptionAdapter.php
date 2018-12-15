@@ -1,8 +1,8 @@
 <?php
 
-namespace Encrypt\Adapter;
+namespace Keet\Encrypt\Adapter;
 
-use Encrypt\Interfaces\EncryptionInterface;
+use Keet\Encrypt\Interfaces\EncryptionInterface;
 use ParagonIE\ConstantTime\Binary;
 use ParagonIE\Halite\Alerts\InvalidKey;
 use ParagonIE\Halite\HiddenString;

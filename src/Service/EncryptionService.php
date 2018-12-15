@@ -1,8 +1,8 @@
 <?php
 
-namespace Encrypt\Service;
+namespace Keet\Encrypt\Service;
 
-use Encrypt\Interfaces\EncryptionInterface;
+use Keet\Encrypt\Interfaces\EncryptionInterface;
 
 class EncryptionService
 {
