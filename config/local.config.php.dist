@@ -1,0 +1,19 @@
+<?php
+
+namespace Encrypt;
+
+return [
+    'doctrine' => [
+        'encryption' => [
+            'orm_default' => [
+                'key' => '',        // Must be 32 characters - Halite requirement
+            ],
+        ],
+        'hashing' => [
+            'orm_default' => [
+                'pepper' => '',     // Must be 32 characters - Halite requirement
+                'key' => '',        // Must be 32 characters - Halite requirement
+            ],
+        ],
+    ],
+];
