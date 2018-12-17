@@ -23,7 +23,11 @@ This might also be applicable ot other local installations.
 ## Zend Framework
 
 Make sure to add the module to you application configuration. In your `modules.config.php` make sure to include 
-`ZfDoctrineEncryptModule`.
+`Keet\\Encrypt`.
+
+### Additional
+
+The configuration which is used makes use of aliases, such as `hashing_service` and `encryption_adapter`. You may override these with your own config to implement your own Service and/or Adapter classes. These will automatically be used by this module if the correct Interface classes are implemented. Make sure to read through the code before you do any of this though.
 
 ## Module
 
@@ -37,7 +41,7 @@ as such, you must disable your `E_NOTICE` warnings in your PHP config :(
 
 ### Encryption
 
-Simple, consider that you have an `Address` Entity, which under upcoming [EU GDPR regulation](https://www.eugdpr.org/)
+Simple, consider that you have an `Address` Entity, which under the [EU GDPR regulation](https://www.eugdpr.org/)
 requires parts of the address, such as the street, to be encrypted. This uses the key & salt required for the config
 by default
 
@@ -80,31 +84,42 @@ To hash something, like a password, add the `@Hashed` Annotation. See the exampl
 **Note** that, unlike `@Encrypted`, there aren't options to give a type. As we can't decrypt the data (it's one-way), 
 there's no need to know what the original type was. The response will always be string value.
 
- ## Controller Examples
+## Controller Examples
+
+### Hashing
+
+A `HashingService` is provided. This service also uses the `HashingAdapter` but provides functionality that 
+can be used in Controllers and other classes, such as plugins. The service is registered under the alias 'hashing_service'.
+You can override 'hasing_service' in your own project to provide your own implementation. 
+
+The `HashingService` provides the ability to hash and verify strings. These are two separate operations, one one-way 
+hashes a string. The other does the same (requires the hashed string) and then verifies that both strings are 
+exactly the same (thus verifying).
+
+In a Controller, to hash a string, simply do:
+
+    $secret = $this->getHashingService()->hash('correct horse battery staple');
+    
+To verify that your dealing the same string a next time, for example to compare passwords on login, do:
+
+    $verified = $this->getHashingService()->verify('correct horse battery staple', $secret);
+    
+`$verified` will be set to a boolean value. 
+
+To not store any entered data longer than you must, you could compare directly from form data, like so:
+
+    if($form->isValid() && $this->getHashingService()->verify($form->getData()['password_field'], $user->getPassword()) {
+        // do other things
+    }
  
- ### Hashing
+### Encryption
  
- A `Hashmanager` service is provided. This manager also uses the `HaliteHashingAdapter` but provides functionality that 
- can be used in Controllers and other classes, such as plugins. The service is registered under the alias 'hashing_service'.
- You can override 'hasing_service' in your own project to provide your own implementation. 
- 
- The `HashManager` provides the ability to hash and verify strings. These are two separate operations, one one-way 
- hashes a string. The other does the same (requires the hashed string) and then verifies that both strings are 
- exactly the same (thus verifying).
- 
- In a Controller, to hash a string, simple do:
- 
-     $secret = $this->getHashManager()->hash('correct horse battery staple')
-     
- To verify that your dealing the same string a next time, for example to compare passwords on login, do:
- 
-     $verified = $this->getHashManager()->verify('correct horse battery staple', $secret)
-     
- `$verified` will be set to a boolean value. 
- 
- To not store any entered data longer than you must, you could compare directly from form data, like so:
- 
-     if($form->isValid() && $this->getHashManager()->verify($form->getData()['password_field'], $user->getPassword()) {
-         // do other things
-     }
-     
+An `EncryptionService` is also provided and works in much the same way as the `HashingService`. It provides functionality to encrypt and to decrypt data. 
+
+To encrypt data, do:
+
+    $encrypted = $this->getEncryptionService()->encrypt('correct horse battery staple');
+    
+To decrypt data, do: 
+
+    $decrypted = $this->getEncryptionService()->decrypt($string);
