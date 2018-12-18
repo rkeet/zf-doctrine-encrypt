@@ -1,6 +1,6 @@
 {
-  "name": "rkeet/zf-doctrine-encrypt",
-  "description": "Provides property encryption and hashing for Doctrine Entities when used within Zend Framework 3.",
+  "name": "cloud-solutions/zf-doctrine-encrypt",
+  "description": "Forked from rkeet/zf-doctrine-encrypt: Provides property encryption and hashing for Doctrine Entities when used within Zend Framework 3.",
   "keywords": [
     "zf3",
     "doctrine2",
