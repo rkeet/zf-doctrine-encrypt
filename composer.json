@@ -29,6 +29,9 @@
     "zendframework/zend-servicemanager": "^2.7.8 || ^3.3",
     "zendframework/zend-stdlib": "^3.2"
   },
+  "require-dev": {
+    "roave/security-advisories": "dev-master"
+  },
   "autoload": {
     "psr-4": {
       "Keet\\Encrypt\\": "src/"
