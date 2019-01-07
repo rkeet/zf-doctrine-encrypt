@@ -3,18 +3,31 @@
 namespace Keet\Encrypt\Adapter;
 
 use Keet\Encrypt\Interfaces\EncryptionInterface;
+use ParagonIE\CipherSweet\Backend\ModernCrypto;
+use ParagonIE\CipherSweet\BlindIndex;
+use ParagonIE\CipherSweet\CipherSweet;
+use ParagonIE\CipherSweet\EncryptedField;
+use ParagonIE\CipherSweet\KeyProvider\StringProvider;
+use ParagonIE\CipherSweet\Transformation\Lowercase;
 use ParagonIE\ConstantTime\Binary;
 use ParagonIE\Halite\Alerts\InvalidKey;
 use ParagonIE\Halite\HiddenString;
-use ParagonIE\Halite\Symmetric\Crypto;
 use ParagonIE\Halite\Symmetric\EncryptionKey;
 
 class EncryptionAdapter implements EncryptionInterface
 {
+    public const FILTER_BITS_VALUE    = 32;
+    public const TRANSFORMATION_CLASS = Lowercase::class;
+
     /**
      * @var EncryptionKey
      */
     private $key;
+
+    /**
+     * @var CipherSweet
+     */
+    private $engine;
 
     /**
      * HaliteAdapter constructor.
@@ -38,35 +51,90 @@ class EncryptionAdapter implements EncryptionInterface
         }
 
         $this->setKey(new EncryptionKey(new HiddenString($key)));
+
+        $provider = new StringProvider(
+            new ModernCrypto(),
+            $this->getKey()->getRawKeyMaterial()
+        );
+
+        $this->engine = new CipherSweet($provider);
+    }
+
+    /**
+     * @param $tableName
+     * @param $colName
+     *
+     * @return EncryptedField
+     */
+    private function getEncryptedField($tableName = "", $colName = ""): EncryptedField
+    {
+        $transformationClass = self::TRANSFORMATION_CLASS;
+        return (new EncryptedField($this->engine, $tableName, $colName))->addBlindIndex(
+            new BlindIndex(
+                $this->getBlindIndexName($tableName, $colName),
+                [new $transformationClass],
+                self::FILTER_BITS_VALUE
+            )
+        );
     }
 
     /**
      * @param string $data
+     * @param string $tableName
+     * @param string $colName
+     *
+     * @return array
+     */
+    public function prepareForStorage(string $data, string $tableName = "", string $colName = ""): array
+    {
+        return $this->getEncryptedField($tableName, $colName)->prepareForStorage($data);
+    }
+
+    /**
+     * @param string $data
+     * @param string $tableName
+     * @param string $colName
      *
      * @return string
-     * @throws \ParagonIE\Halite\Alerts\CannotPerformOperation
-     * @throws \ParagonIE\Halite\Alerts\InvalidDigestLength
-     * @throws \ParagonIE\Halite\Alerts\InvalidMessage
-     * @throws \ParagonIE\Halite\Alerts\InvalidType
      */
-    public function encrypt(string $data) : string
+    public function encrypt(string $data, string $tableName = "", string $colName = ""): string
     {
-        return Crypto::encrypt(new HiddenString($data), $this->getKey());
+        return $this->getEncryptedField($tableName, $colName)->encryptValue($data);
     }
 
     /**
      * @param string $data
+     * @param string $tableName
+     * @param string $colName
      *
-     * @return HiddenString|string
-     * @throws \ParagonIE\Halite\Alerts\CannotPerformOperation
-     * @throws \ParagonIE\Halite\Alerts\InvalidDigestLength
-     * @throws \ParagonIE\Halite\Alerts\InvalidMessage
-     * @throws \ParagonIE\Halite\Alerts\InvalidSignature
-     * @throws \ParagonIE\Halite\Alerts\InvalidType
+     * @return string
      */
-    public function decrypt(string $data) : string
+    public function decrypt(string $data, string $tableName = "", string $colName = ""): string
     {
-        return Crypto::decrypt($data, $this->getKey());
+        return $this->getEncryptedField($tableName, $colName)->decryptValue($data);
+    }
+
+    /**
+     * @param string $data
+     * @param string $tableName
+     * @param string $colName
+     *
+     * @return array
+     */
+    public function getBlindIndex(string $data, string $tableName = "", string $colName = ""): array
+    {
+        return $this->getEncryptedField($tableName, $colName)->getBlindIndex($data, $this->getBlindIndexName($tableName, $colName));
+    }
+
+    /**
+     * @param string $tableName
+     * @param string $colName
+     *
+     * @return string
+     */
+    public function getBlindIndexName($tableName = "", $colName = ""): string
+    {
+        return sprintf('%s_%s', $tableName, $colName);
     }
 
     /**

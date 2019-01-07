@@ -23,22 +23,38 @@ class EncryptionService
 
     /**
      * @param string $data
+     * @param string $tableName
+     * @param string $colName
      *
      * @return string
      */
-    public function encrypt(string $data) : string
+    public function encrypt(string $data, string $tableName = "", string $colName = ""): string
     {
-        return $this->getAdapter()->encrypt($data);
+        return $this->getAdapter()->encrypt($data, $tableName, $colName);
     }
 
     /**
      * @param string $data
+     * @param string $tableName
+     * @param string $colName
      *
      * @return string
      */
-    public function decrypt(string $data) : string
+    public function decrypt(string $data, string $tableName = "", string $colName = ""): string
     {
-        return $this->getAdapter()->decrypt($data);
+        return $this->getAdapter()->decrypt($data, $tableName, $colName);
+    }
+
+    /**
+     * @param        $data
+     * @param string $tableName
+     * @param string $colName
+     *
+     * @return array
+     */
+    public function getBlindIndex(string $data, string $tableName = "", string $colName = ""): array
+    {
+        return $this->getAdapter()->getBlindIndex($data, $tableName, $colName);
     }
 
     /**

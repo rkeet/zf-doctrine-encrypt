@@ -18,6 +18,11 @@ class Encrypted
     public $type = 'string';
 
     /**
+     * @var string
+     */
+    public $blindIndex;
+
+    /**
      * @return null|string
      */
     public function getType() : ?string
@@ -36,4 +41,24 @@ class Encrypted
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getBlindIndex(): string
+    {
+        return $this->blindIndex;
+    }
+
+    /**
+     * @param string $blindIndex
+     *
+     * @return Encrypted
+     */
+    public function setBlindIndex(string $blindIndex): Encrypted
+    {
+        $this->blindIndex = $blindIndex;
+        return $this;
+    }
+
 }

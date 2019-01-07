@@ -18,12 +18,12 @@ class EncryptionSubscriber implements EventSubscriber
     /**
      * Encryptor interface namespace
      */
-    const ENCRYPTOR_INTERFACE_NS = EncryptionInterface::class;
+    public const ENCRYPTOR_INTERFACE_NS = EncryptionInterface::class;
 
     /**
      * Encrypted annotation full name
      */
-    const ENCRYPTED_ANNOTATION_NAME = Encrypted::class;
+    public const ENCRYPTED_ANNOTATION_NAME = Encrypted::class;
 
     /**
      * Encryptor
@@ -85,7 +85,7 @@ class EncryptionSubscriber implements EventSubscriber
      *
      * @throws \Doctrine\ORM\Mapping\MappingException
      */
-    public function onFlush(OnFlushEventArgs $args)
+    public function onFlush(OnFlushEventArgs $args): void
     {
         $objectManager = $args->getEntityManager();
         $unitOfWork = $objectManager->getUnitOfWork();
@@ -108,7 +108,7 @@ class EncryptionSubscriber implements EventSubscriber
      *
      * @throws \Doctrine\ORM\Mapping\MappingException
      */
-    private function entityOnFlush(object $entity, ObjectManager $objectManager)
+    private function entityOnFlush(object $entity, ObjectManager $objectManager): void
     {
         $objId = spl_object_hash($entity);
         $fields = [];
@@ -137,7 +137,7 @@ class EncryptionSubscriber implements EventSubscriber
      *
      * @param PostFlushEventArgs $args
      */
-    public function postFlush(PostFlushEventArgs $args)
+    public function postFlush(PostFlushEventArgs $args): void
     {
         $unitOfWork = $args->getEntityManager()->getUnitOfWork();
 
@@ -167,7 +167,7 @@ class EncryptionSubscriber implements EventSubscriber
      *
      * @throws \Doctrine\ORM\Mapping\MappingException
      */
-    public function postLoad(LifecycleEventArgs $args)
+    public function postLoad(LifecycleEventArgs $args): void
     {
         $entity = $args->getEntity();
         $objectManager = $args->getEntityManager();
@@ -179,6 +179,9 @@ class EncryptionSubscriber implements EventSubscriber
         }
     }
 
+    /**
+     * @return array
+     */
     public function getSubscribedEvents() : array
     {
         return [
@@ -221,9 +224,19 @@ class EncryptionSubscriber implements EventSubscriber
                 continue;
             }
 
-            $value = $isEncryptOperation
-                ? $this->getEncryptor()->encrypt($value)
-                : $this->getEncryptor()->decrypt($value);
+            $tableName = $property['table'];
+            $colName   = $refProperty->getName();
+
+            if ($isEncryptOperation) {
+                [$value, $blindIndex] = $this->getEncryptor()->prepareForStorage($value, $tableName, $colName);
+                // set the blind index
+                $setter = 'set' . ucfirst($annotationOptions->getBlindIndex());
+                if (method_exists($entity, $setter) && isset($blindIndex)) {
+                    $entity->$setter($blindIndex[$this->encryptor->getBlindIndexName($tableName, $colName)]['value']);
+                }
+            } else {
+                $value = $this->getEncryptor()->decrypt($value, $tableName, $colName);
+            }
 
             $type = $annotationOptions->getType();
 
@@ -283,7 +296,7 @@ class EncryptionSubscriber implements EventSubscriber
     /**
      * @param \object $entity Some doctrine entity
      */
-    private function addToDecodedRegistry($entity)
+    private function addToDecodedRegistry($entity): void
     {
         $this->decodedRegistry[spl_object_hash($entity)] = true;
     }
@@ -318,6 +331,7 @@ class EncryptionSubscriber implements EventSubscriber
                     'reflection' => $refProperty,
                     'options'    => $annotationOptions,
                     'nullable'   => $meta->getFieldMapping($refProperty->getName())['nullable'],
+                    'table'      => $meta->getTableName()
                 ];
             }
         }
