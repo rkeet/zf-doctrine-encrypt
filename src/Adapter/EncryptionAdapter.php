@@ -11,8 +11,8 @@ use ParagonIE\CipherSweet\KeyProvider\StringProvider;
 use ParagonIE\CipherSweet\Transformation\Lowercase;
 use ParagonIE\ConstantTime\Binary;
 use ParagonIE\Halite\Alerts\InvalidKey;
-use ParagonIE\Halite\HiddenString;
 use ParagonIE\Halite\Symmetric\EncryptionKey;
+use ParagonIE\HiddenString\HiddenString;
 
 class EncryptionAdapter implements EncryptionInterface
 {
