@@ -172,10 +172,8 @@ class EncryptionSubscriber implements EventSubscriber
         $entity = $args->getEntity();
         $objectManager = $args->getEntityManager();
 
-        if ( ! $this->hasInDecodedRegistry($entity)) {
-            if ($this->processFields($entity, $objectManager, false)) {
-                $this->addToDecodedRegistry($entity);
-            }
+        if (!$this->hasInDecodedRegistry($entity) && $this->processFields($entity, $objectManager, false)) {
+            $this->addToDecodedRegistry($entity);
         }
     }
 
@@ -262,16 +260,15 @@ class EncryptionSubscriber implements EventSubscriber
                     ]
                 )
                 && gettype($value) !== $type
+                && settype($value, $type) === false
             ) {
-                if (settype($value, $type) === false) {
-                    throw new \Exception(
-                        sprintf(
-                            'Could not convert encrypted value back to mapped value in %s::%s' . PHP_EOL,
-                            __CLASS__,
-                            __FUNCTION__
-                        )
-                    );
-                }
+                throw new \RuntimeException(
+                    sprintf(
+                        'Could not convert encrypted value back to mapped value in %s::%s' . PHP_EOL,
+                        __CLASS__,
+                        __FUNCTION__
+                    )
+                );
             }
 
             $refProperty->setValue($entity, $value);
