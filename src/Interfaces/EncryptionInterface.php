@@ -2,6 +2,8 @@
 
 namespace Keet\Encrypt\Interfaces;
 
+use Keet\Encrypt\Result\EncryptionStorage;
+
 interface EncryptionInterface
 {
     /**
@@ -18,9 +20,9 @@ interface EncryptionInterface
      * @param string $tableName
      * @param string $colName
      *
-     * @return array
+     * @return EncryptionStorage
      */
-    public function prepareForStorage(string $data, string $tableName = "", string $colName = ""): array;
+    public function prepareForStorage(string $data, string $tableName = "", string $colName = ""): EncryptionStorage;
 
     /**
      * @param string $data

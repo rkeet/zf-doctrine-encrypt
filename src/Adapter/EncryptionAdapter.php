@@ -3,6 +3,7 @@
 namespace Keet\Encrypt\Adapter;
 
 use Keet\Encrypt\Interfaces\EncryptionInterface;
+use Keet\Encrypt\Result\EncryptionStorage;
 use ParagonIE\CipherSweet\Backend\ModernCrypto;
 use ParagonIE\CipherSweet\BlindIndex;
 use ParagonIE\CipherSweet\CipherSweet;
@@ -83,11 +84,12 @@ class EncryptionAdapter implements EncryptionInterface
      * @param string $tableName
      * @param string $colName
      *
-     * @return array
+     * @return EncryptionStorage
      */
-    public function prepareForStorage(string $data, string $tableName = "", string $colName = ""): array
+    public function prepareForStorage(string $data, string $tableName = "", string $colName = ""): EncryptionStorage
     {
-        return $this->getEncryptedField($tableName, $colName)->prepareForStorage($data);
+        [$encryptedText, $blindIndexes] = $this->getEncryptedField($tableName, $colName)->prepareForStorage($data);
+        return new EncryptionStorage($encryptedText, $blindIndexes);
     }
 
     /**

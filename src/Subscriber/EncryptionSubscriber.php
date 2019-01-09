@@ -228,11 +228,13 @@ class EncryptionSubscriber implements EventSubscriber
             $colName   = $refProperty->getName();
 
             if ($isEncryptOperation) {
-                [$value, $blindIndex] = $this->getEncryptor()->prepareForStorage($value, $tableName, $colName);
+                $encryptionStorage = $this->getEncryptor()->prepareForStorage($value, $tableName, $colName);
+                $value             = $encryptionStorage->getEncryptedText();
+                $blindIndexValue   = $encryptionStorage->getBlindIndexValue($this->encryptor->getBlindIndexName($tableName, $colName));
                 // set the blind index
                 $setter = 'set' . ucfirst($annotationOptions->getBlindIndex());
-                if (method_exists($entity, $setter) && isset($blindIndex)) {
-                    $entity->$setter($blindIndex[$this->encryptor->getBlindIndexName($tableName, $colName)]['value']);
+                if (method_exists($entity, $setter) && !is_null($blindIndexValue)) {
+                    $entity->$setter($blindIndexValue);
                 }
             } else {
                 $value = $this->getEncryptor()->decrypt($value, $tableName, $colName);

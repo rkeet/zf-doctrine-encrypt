@@ -3,6 +3,7 @@
 namespace Keet\Encrypt\Service;
 
 use Keet\Encrypt\Interfaces\EncryptionInterface;
+use Keet\Encrypt\Result\EncryptionStorage;
 
 class EncryptionService
 {
@@ -73,9 +74,9 @@ class EncryptionService
      * @param string $tableName
      * @param string $colName
      *
-     * @return array
+     * @return EncryptionStorage
      */
-    public function prepareForStorage(string $data, string $tableName = "", string $colName = ""): array
+    public function prepareForStorage(string $data, string $tableName = "", string $colName = ""): EncryptionStorage
     {
         return $this->getAdapter()->prepareForStorage($data, $tableName, $colName);
     }
