@@ -87,8 +87,8 @@ class EncryptionSubscriber implements EventSubscriber
      */
     public function onFlush(OnFlushEventArgs $args): void
     {
-        $objectManager = $args->getEntityManager();
-        $unitOfWork = $objectManager->getUnitOfWork();
+        $objectManager               = $args->getEntityManager();
+        $unitOfWork                  = $objectManager->getUnitOfWork();
         $this->postFlushDecryptQueue = [];
 
         foreach ($unitOfWork->getScheduledEntityInsertions() as $entity) {
@@ -110,12 +110,12 @@ class EncryptionSubscriber implements EventSubscriber
      */
     private function entityOnFlush(object $entity, ObjectManager $objectManager): void
     {
-        $objId = spl_object_hash($entity);
+        $objId  = spl_object_hash($entity);
         $fields = [];
 
         foreach ($this->getEncryptedFields($entity, $objectManager) as $field) {
             /** @var \ReflectionProperty $reflectionProperty */
-            $reflectionProperty = $field['reflection'];
+            $reflectionProperty                     = $field['reflection'];
             $fields[$reflectionProperty->getName()] = [
                 'field'   => $reflectionProperty,
                 'value'   => $reflectionProperty->getValue($entity),
@@ -143,8 +143,8 @@ class EncryptionSubscriber implements EventSubscriber
 
         foreach ($this->postFlushDecryptQueue as $pair) {
             $fieldPairs = $pair['fields'];
-            $entity = $pair['entity'];
-            $oid = spl_object_hash($entity);
+            $entity     = $pair['entity'];
+            $oid        = spl_object_hash($entity);
 
             foreach ($fieldPairs as $fieldPair) {
                 /** @var \ReflectionProperty $field */
@@ -169,7 +169,7 @@ class EncryptionSubscriber implements EventSubscriber
      */
     public function postLoad(LifecycleEventArgs $args): void
     {
-        $entity = $args->getEntity();
+        $entity        = $args->getEntity();
         $objectManager = $args->getEntityManager();
 
         if (!$this->hasInDecodedRegistry($entity) && $this->processFields($entity, $objectManager, false)) {
@@ -180,7 +180,7 @@ class EncryptionSubscriber implements EventSubscriber
     /**
      * @return array
      */
-    public function getSubscribedEvents() : array
+    public function getSubscribedEvents(): array
     {
         return [
             Events::postLoad,
@@ -200,11 +200,11 @@ class EncryptionSubscriber implements EventSubscriber
      * @throws \Doctrine\ORM\Mapping\MappingException
      * @throws \Exception
      */
-    private function processFields($entity, EntityManager $em, $isEncryptOperation = true) : bool
+    private function processFields($entity, EntityManager $em, $isEncryptOperation = true): bool
     {
         $properties = $this->getEncryptedFields($entity, $em);
         $unitOfWork = $em->getUnitOfWork();
-        $oid = spl_object_hash($entity);
+        $oid        = spl_object_hash($entity);
 
         foreach ($properties as $property) {
             /** @var \ReflectionProperty $refProperty */
@@ -228,11 +228,16 @@ class EncryptionSubscriber implements EventSubscriber
             if ($isEncryptOperation) {
                 $encryptionStorage = $this->getEncryptor()->prepareForStorage($value, $tableName, $colName);
                 $value             = $encryptionStorage->getEncryptedText();
-                $blindIndexValue   = $encryptionStorage->getBlindIndexValue($this->encryptor->getBlindIndexName($tableName, $colName));
-                // set the blind index
-                $setter = 'set' . ucfirst($annotationOptions->getBlindIndex());
-                if (method_exists($entity, $setter) && !is_null($blindIndexValue)) {
-                    $entity->$setter($blindIndexValue);
+                if ($blindIndexAnnotation = $annotationOptions->getBlindIndex()) {
+                    // set the blind index
+                    $setter = 'set' . ucfirst($blindIndexAnnotation);
+                    if (method_exists($entity, $setter) &&
+                        $blindIndexValue =
+                            $encryptionStorage->getBlindIndexValue(
+                                $this->encryptor->getBlindIndexName($tableName, $colName)
+                            )) {
+                        $entity->$setter($blindIndexValue);
+                    }
                 }
             } else {
                 $value = $this->getEncryptor()->decrypt($value, $tableName, $colName);
@@ -273,13 +278,13 @@ class EncryptionSubscriber implements EventSubscriber
 
             $refProperty->setValue($entity, $value);
 
-            if ( ! $isEncryptOperation) {
+            if (!$isEncryptOperation) {
                 //we don't want the object to be dirty immediately after reading
                 $unitOfWork->setOriginalEntityProperty($oid, $refProperty->getName(), $value);
             }
         }
 
-        return ! empty($properties);
+        return !empty($properties);
     }
 
     /**
@@ -287,7 +292,7 @@ class EncryptionSubscriber implements EventSubscriber
      *
      * @return bool
      */
-    private function hasInDecodedRegistry($entity) : bool
+    private function hasInDecodedRegistry($entity): bool
     {
         return isset($this->decodedRegistry[spl_object_hash($entity)]);
     }
@@ -315,7 +320,7 @@ class EncryptionSubscriber implements EventSubscriber
             return $this->encryptedFieldCache[$className];
         }
 
-        $meta = $em->getClassMetadata($className);
+        $meta            = $em->getClassMetadata($className);
         $encryptedFields = [];
 
         foreach ($meta->getReflectionProperties() as $refProperty) {
@@ -324,7 +329,7 @@ class EncryptionSubscriber implements EventSubscriber
             $annotationOptions =
                 $this->reader->getPropertyAnnotation($refProperty, $this::ENCRYPTED_ANNOTATION_NAME) ?: [];
 
-            if ( ! empty($annotationOptions)) {
+            if (!empty($annotationOptions)) {
                 $refProperty->setAccessible(true);
                 $encryptedFields[] = [
                     'reflection' => $refProperty,
@@ -342,7 +347,7 @@ class EncryptionSubscriber implements EventSubscriber
     /**
      * @return EncryptionInterface
      */
-    public function getEncryptor() : EncryptionInterface
+    public function getEncryptor(): EncryptionInterface
     {
         return $this->encryptor;
     }
@@ -352,7 +357,7 @@ class EncryptionSubscriber implements EventSubscriber
      *
      * @return EncryptionSubscriber
      */
-    public function setEncryptor(EncryptionInterface $encryptor) : EncryptionSubscriber
+    public function setEncryptor(EncryptionInterface $encryptor): EncryptionSubscriber
     {
         $this->encryptor = $encryptor;
 
@@ -362,7 +367,7 @@ class EncryptionSubscriber implements EventSubscriber
     /**
      * @return Reader
      */
-    public function getReader() : Reader
+    public function getReader(): Reader
     {
         return $this->reader;
     }
@@ -372,7 +377,7 @@ class EncryptionSubscriber implements EventSubscriber
      *
      * @return EncryptionSubscriber
      */
-    public function setReader(Reader $reader) : EncryptionSubscriber
+    public function setReader(Reader $reader): EncryptionSubscriber
     {
         $this->reader = $reader;
 
@@ -382,7 +387,7 @@ class EncryptionSubscriber implements EventSubscriber
     /**
      * @return array
      */
-    public function getDecodedRegistry() : array
+    public function getDecodedRegistry(): array
     {
         return $this->decodedRegistry;
     }
@@ -392,7 +397,7 @@ class EncryptionSubscriber implements EventSubscriber
      *
      * @return EncryptionSubscriber
      */
-    public function setDecodedRegistry(array $decodedRegistry) : EncryptionSubscriber
+    public function setDecodedRegistry(array $decodedRegistry): EncryptionSubscriber
     {
         $this->decodedRegistry = $decodedRegistry;
 
@@ -402,7 +407,7 @@ class EncryptionSubscriber implements EventSubscriber
     /**
      * @return array
      */
-    public function getEncryptedFieldCache() : array
+    public function getEncryptedFieldCache(): array
     {
         return $this->encryptedFieldCache;
     }
@@ -412,7 +417,7 @@ class EncryptionSubscriber implements EventSubscriber
      *
      * @return EncryptionSubscriber
      */
-    public function setEncryptedFieldCache(array $encryptedFieldCache) : EncryptionSubscriber
+    public function setEncryptedFieldCache(array $encryptedFieldCache): EncryptionSubscriber
     {
         $this->encryptedFieldCache = $encryptedFieldCache;
 
@@ -422,7 +427,7 @@ class EncryptionSubscriber implements EventSubscriber
     /**
      * @return array
      */
-    public function getPostFlushDecryptQueue() : array
+    public function getPostFlushDecryptQueue(): array
     {
         return $this->postFlushDecryptQueue;
     }
@@ -432,7 +437,7 @@ class EncryptionSubscriber implements EventSubscriber
      *
      * @return EncryptionSubscriber
      */
-    public function setPostFlushDecryptQueue(array $postFlushDecryptQueue) : EncryptionSubscriber
+    public function setPostFlushDecryptQueue(array $postFlushDecryptQueue): EncryptionSubscriber
     {
         $this->postFlushDecryptQueue = $postFlushDecryptQueue;
 

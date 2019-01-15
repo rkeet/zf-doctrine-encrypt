@@ -43,9 +43,9 @@ class Encrypted
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getBlindIndex(): string
+    public function getBlindIndex(): ?string
     {
         return $this->blindIndex;
     }
