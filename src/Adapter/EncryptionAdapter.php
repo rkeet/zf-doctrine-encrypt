@@ -5,9 +5,9 @@ namespace Keet\Encrypt\Adapter;
 use Keet\Encrypt\Interfaces\EncryptionInterface;
 use ParagonIE\ConstantTime\Binary;
 use ParagonIE\Halite\Alerts\InvalidKey;
-use ParagonIE\Halite\HiddenString;
 use ParagonIE\Halite\Symmetric\Crypto;
 use ParagonIE\Halite\Symmetric\EncryptionKey;
+use ParagonIE\HiddenString\HiddenString;
 
 class EncryptionAdapter implements EncryptionInterface
 {
