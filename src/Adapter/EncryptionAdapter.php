@@ -4,7 +4,7 @@ namespace Keet\Encrypt\Adapter;
 
 use Keet\Encrypt\Interfaces\EncryptionInterface;
 use Keet\Encrypt\Result\EncryptionStorage;
-use ParagonIE\CipherSweet\Backend\ModernCrypto;
+use ParagonIE\CipherSweet\Backend\FIPSCrypto;
 use ParagonIE\CipherSweet\BlindIndex;
 use ParagonIE\CipherSweet\CipherSweet;
 use ParagonIE\CipherSweet\EncryptedField;
@@ -54,7 +54,7 @@ class EncryptionAdapter implements EncryptionInterface
         $this->setKey(new EncryptionKey(new HiddenString($key)));
 
         $provider = new StringProvider(
-            new ModernCrypto(),
+            new FIPSCrypto(),
             $this->getKey()->getRawKeyMaterial()
         );
 
