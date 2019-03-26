@@ -49,7 +49,7 @@ To encrypt a street name, add `@Encrypted` like so:
 
     /**
      * @var string
-     * @ORM\Column(name="street", type="string", length=255, nullable=true)
+     * @ORM\Column(name="street", type="text", nullable=true)
      * @Encrypted
      */
     protected $street;
@@ -60,12 +60,17 @@ must be provided if not a string. You can do this like so:
 
     /**
      * @var int
-     * @ORM\Column(name="house_number", type="integer", length=20, nullable=false)
+     * @ORM\Column(name="house_number", type="text", nullable=false)
      * @Encrypted(type="int")
      */
     protected $houseNumber;
     
 Supported types are [found here](http://php.net/settype).
+
+#### Cypertext representation
+As the cypher text always results in a string longer than 255 chars you should use a datatype capable
+of representing the full length of it. 
+Be aware that even an integer property will be handled as a string representation in the database.
 
 ### Hashing
 
