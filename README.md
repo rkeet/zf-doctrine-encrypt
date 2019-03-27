@@ -67,10 +67,11 @@ must be provided if not a string. You can do this like so:
     
 Supported types are [found here](http://php.net/settype).
 
-#### Cypertext representation
+### Cyphertext representation
+
 The cypher text always results in a string with varying length always longer than 255 chars.
 Therefore you should use a datatype capable of representing the full length of it. 
-Be aware that even an integer property will be handled as a string representation in the database.
+Be aware that any non-string property will be handled as a string representation in the database.
 
 ### Hashing
 
