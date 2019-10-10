@@ -130,6 +130,7 @@ class HashingSubscriber implements EventSubscriber
     private function processFields($entity, EntityManager $em) : bool
     {
         $properties = $this->getHashableFields($entity, $em);
+        $entityChangeSet = $em->getUnitOfWork()->getEntityChangeSet($entity);
 
         foreach ($properties as $property) {
             /** @var \ReflectionProperty $refProperty */
@@ -148,8 +149,12 @@ class HashingSubscriber implements EventSubscriber
                 continue;
             }
 
-            $value = $this->addSalt($value, $annotationOptions, $entity);
-            $refProperty->setValue($entity, $this->getHashor()->hash($value));
+            if (key_exists($refProperty->getName(), $entityChangeSet)
+                && $entityChangeSet[$refProperty->getName()][0] === null
+            ) {
+                $value = $this->addSalt($value, $annotationOptions, $entity);
+                $refProperty->setValue($entity, $this->getHashor()->hash($value));
+            }
         }
 
         return ! empty($properties);
@@ -190,6 +195,7 @@ class HashingSubscriber implements EventSubscriber
     private function getHashableFields(object $entity, EntityManager $em)
     {
         $className = get_class($entity);
+        $entityChangeSet = $em->getUnitOfWork()->getEntityChangeSet($entity);
 
         if (isset($this->hashedFieldCache[$className])) {
             return $this->hashedFieldCache[$className];
@@ -206,11 +212,18 @@ class HashingSubscriber implements EventSubscriber
 
             if ( ! empty($annotationOptions)) {
                 $refProperty->setAccessible(true);
-                $hashableFields[] = [
-                    'reflection' => $refProperty,
-                    'options'    => $annotationOptions,
-                    'nullable'   => $meta->getFieldMapping($refProperty->getName())['nullable'],
-                ];
+
+                if (key_exists($refProperty->getName(), $entityChangeSet)
+                    && $entityChangeSet[$refProperty->getName()][0] === null
+                ) {
+                    $hashableFields[] = [
+                        'reflection' => $refProperty,
+                        'options'    => $annotationOptions,
+                        'nullable'   => $meta->getFieldMapping($refProperty->getName())['nullable'],
+                    ];
+                } else if (key_exists($refProperty->getName(), $entityChangeSet)) {
+                    $refProperty->setValue($entity, $entityChangeSet[$refProperty->getName()][0]);
+                }
             }
         }
 
