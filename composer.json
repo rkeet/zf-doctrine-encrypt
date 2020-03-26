@@ -40,5 +40,5 @@
       "src/Module.php"
     ]
   },
-  "abandoned": true
+  "abandoned": "somecoding/laminas-doctrine-encrypt"
 }
