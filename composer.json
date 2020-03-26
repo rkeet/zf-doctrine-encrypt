@@ -29,9 +29,6 @@
     "zendframework/zend-servicemanager": "^2.7.8 || ^3.3",
     "zendframework/zend-stdlib": "^3.2"
   },
-  "suggest": {
-    "somecoding/laminas-doctrine-encrypt": "Fork of this Package with Laminas Support"
-  },
   "autoload": {
     "psr-4": {
       "Keet\\Encrypt\\": "src/"
